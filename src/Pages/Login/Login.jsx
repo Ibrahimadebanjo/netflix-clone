@@ -1,20 +1,46 @@
 import React, { useState } from 'react'
 import './Login.css'
+import { login,signup } from '../../Firebase'
 import logo from '../../assets/logo.png'
+import netflix_spinner from '../../assets/netflix_spinner.gif';
 const Login = () => {
 const [sign, setSign] = useState("Sign In")
+const [name, setName] = useState("")
+const [email, setEmail] = useState("")
+const [password, setPassword] = useState("")
+
+const [loading, setLoading] = useState(false)
+
+
+const user_auth = async (e)=> {
+  e.preventDefault();
+  setLoading(true);
+  if (sign === "Sign In") {
+   await login(email, password) 
+  }
+  else {
+  await signup(name, email, password);
+  }
+  setLoading(false);
+}
+
+
 
 
   return (
+    loading ? <div className="login-spinner">
+      <img src={netflix_spinner} alt="" />
+    </div> :
     <div className='login'>
       <img src={logo} alt="" className='login-logo'/>
     <div className="login-form">
       <h1>{sign} </h1>
       <form action="">
-        { sign==="Sign In" ?  <input type="text" placeholder='Your name' /> : <></> }
-        <input type="email"  placeholder='Email'/>
-        <input type="password" placeholder='Password' />
-        <button>{sign}</button>
+        { sign==="Sign Up" ?  <input value={name}  onChange={(e)=>{setName(e.target.value)}} 
+        type="text" placeholder='Your name' /> : <></> }
+        <input type="email" value={email} onChange={(e)=>{setEmail(e.target.value)}}   placeholder='Email'/>
+        <input type="password" value={password} onChange={(e)=>{setPassword(e.target.value)}} placeholder='Password' />
+        <button onClick={user_auth} type='submit'>{sign}</button>
         <div className="form-help">
           <div className="remember">
             <input type="checkbox" />
@@ -25,7 +51,7 @@ const [sign, setSign] = useState("Sign In")
       </form>
       <div className="form-switch">
         {
-          sign === "Sign In" ? <p>New to Netflix <span onClick={()=>{setSign("Sign UP")}}>Sign Up Now</span></p> 
+          sign === "Sign In" ? <p>New to Netflix <span onClick={()=>{setSign("Sign Up")}}>Sign Up Now</span></p> 
           : <p>Already have an account<span onClick={()=>{setSign("Sign In")}}>Sign In Now</span></p>
         }
         
